@@ -47,7 +47,6 @@ class Param
         try
         {
             $paramSoapYanit = $this->getSoapClient()->TP_Islem_Sorgulama($islemBilgiIstekObjesi)->TP_Islem_SorgulamaResult;
-
             if ($islemDetay = $paramSoapYanit->Sonuc > 0)
             {
                 if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
@@ -111,16 +110,19 @@ class Param
         try
         {
             $paramSoapYanit = $this->getSoapClient()->TP_Islem_Sorgulama($islemBilgiIstekObjesi)->TP_Islem_SorgulamaResult;
-            if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
+            if ($islemDetay = $paramSoapYanit->Sonuc > 0)
             {
-                $islemListesi = (object) $xmlData->diffgram->NewDataSet->DT_Islem_Sorgulama;
+                if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
+                {
+                    $islemDetay = (object) $xmlData->diffgram->NewDataSet->DT_Islem_Sorgulama;
+                }
             }
 
             return (object) [
                 'Sonuc' => $paramSoapYanit->Sonuc,
                 'Sonuc_Str' => $paramSoapYanit->Sonuc_Str,
                 'Sonuc_Aciklama' => config('paramlaravel.error_messages.' . $paramSoapYanit->Sonuc, 'Tanımsız hata.'),
-                'DT_Bilgi' => $islemListesi,
+                'DT_Bilgi' => $islemDetay,
             ];
         }
         catch (Exception $ex)
@@ -141,10 +143,12 @@ class Param
         try
         {
             $paramSoapYanit = $this->getSoapClient()->TP_Mutabakat_Ozet($islemOzetIstekObjesi)->TP_Mutabakat_OzetResult;
-
-            if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
+            if ($islemListesi = $paramSoapYanit->Sonuc > 0)
             {
-                $islemListesi = (object) $xmlData->diffgram->NewDataSet->DT_Mutabakat_Ozet;
+                if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
+                {
+                    $islemListesi = (object) $xmlData->diffgram->NewDataSet->DT_Mutabakat_Ozet;
+                }
             }
 
             return (object) [
@@ -222,13 +226,16 @@ class Param
 
         try
         {
-            $ozelOranListesi = [];
             $paramSoapYanit = $this->getSoapClient()->TP_Ozel_Oran_SK_Liste($ozelOranObject)->TP_Ozel_Oran_SK_ListeResult;
-            if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
+            if ($ozelOranListesi = $paramSoapYanit->Sonuc > 0)
             {
-                foreach ($xmlData->diffgram->NewDataSet->DT_Ozel_Oranlar_SK as $card)
+                $ozelOranListesi = [];
+                if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
                 {
-                    $ozelOranListesi[] = (array) $card;
+                    foreach ($xmlData->diffgram->NewDataSet->DT_Ozel_Oranlar_SK as $card)
+                    {
+                        $ozelOranListesi[] = (array) $card;
+                    }
                 }
             }
 
@@ -282,13 +289,12 @@ class Param
 
         try
         {
-            $kartListesi = [];
             $paramSoapYanit = $this->getSoapClient()->KK_Sakli_Liste($kartListesiIstekObjesi)->KK_Sakli_ListeResult;
-            if (property_exists($paramSoapYanit, 'DT_Bilgi'))
+            if ($kartListesi = $paramSoapYanit->Sonuc > 0)
             {
+                $kartListesi = [];
                 if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
                 {
-                    $kartListesi = [];
                     foreach ($xmlData->diffgram->NewDataSet->Temp as $card)
                     {
                         $kartListesi[] = (array) $card;

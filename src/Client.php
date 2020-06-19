@@ -27,7 +27,7 @@ class Client
         $this->guid = $guid ?? env('PARAM_GUID', '0c13d406-873b-403b-9c09-a5766840d98c');
         $this->test_mode = $test_mode ?? env('PARAM_TEST_MODE', true);
 
-        $this->soap_options = isset($soap_options) ? $soap_options : [
+        $this->soap_options = $soap_options ?? [
             'soap_version' => 'SOAP_1_1',
             'trace' => 1,
             'stream_context' => stream_context_create([

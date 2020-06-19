@@ -19,8 +19,8 @@ class Odeme
 
     protected Param $param;
 
-    protected int $payment_type;
-    protected bool $paywith_3d = false;
+    protected int $odeme_tipi;
+    protected bool $odeme_3D = false;
     protected int $pos_id;
 
     protected string $cc_holder;
@@ -36,7 +36,7 @@ class Odeme
 
     protected int $currency_code;
 
-    protected int $installment;
+    protected int $taksit_sayisi;
     protected string $order_price;
     protected string $order_total;
 
@@ -55,10 +55,10 @@ class Odeme
     protected string $extra_data4;
     protected string $extra_data5;
 
-    public function __construct(Param $param = null, int $payment_type = self::ODEME_NORMAL, int $pos_id = null)
+    public function __construct(Param $param = null, int $odeme_tipi = self::ODEME_NORMAL, int $pos_id = null)
     {
         $this->param = $param ?? new Param();
-        $this->payment_type = $payment_type;
+        $this->odeme_tipi = $odeme_tipi;
 
         if (isset($pos_id))
         {
@@ -66,16 +66,16 @@ class Odeme
         }
     }
 
-    public function setPaymentType(int $payment_type): Odeme
+    public function setPaymentType(int $odeme_tipi): Odeme
     {
-        $this->payment_type = $payment_type;
+        $this->odeme_tipi = $odeme_tipi;
 
         return $this;
     }
 
-    public function setPayment3dStatus(bool $status_3d): Odeme
+    public function setPayment3dStatus(bool $odeme_3D): Odeme
     {
-        $this->paywith_3d = $status_3d;
+        $this->odeme_3D = $odeme_3D;
 
         return $this;
     }
@@ -157,9 +157,9 @@ class Odeme
         return $this;
     }
 
-    public function setInstallment(int $installment_count): Odeme
+    public function setInstallment(int $taksit_sayisi = 1): Odeme
     {
-        $this->installment = $installment_count;
+        $this->taksit_sayisi = $taksit_sayisi;
 
         return $this;
     }
@@ -262,15 +262,15 @@ class Odeme
         return $this;
     }
 
-    public function getHash(): string
+    public function HashOlustur(): string
     {
         $hashObject = new stdClass();
         $hashObject->Data = $this->param->getClient()->getClientCode();
         $hashObject->Data .= $this->param->getClient()->getGuid();
-        if ($this->payment_type != self::ODEME_BKMEXPRESS)
+        if ($this->odeme_tipi != self::ODEME_BKMEXPRESS)
         {
             $hashObject->Data .= $this->pos_id;
-            $hashObject->Data .= $this->installment;
+            $hashObject->Data .= $this->taksit_sayisi;
             $hashObject->Data .= $this->order_price;
         }
         $hashObject->Data .= $this->order_total;
@@ -288,23 +288,23 @@ class Odeme
         }
     }
 
-    public function KsKartSakla(): stdClass
+    public function KSKartEkle(string $kart_sahibi = null, string $kart_numarasi = null, string $kart_skt_ay = null, string $kart_skt_yil = null, string $kartsaklama_ismi = null, string $kartsaklama_islemid = null): stdClass
     {
         $ksKartObject = $this->param->getClient()->istekObjesiTemeliGetir(true);
-        $ksKartObject->KK_Sahibi = $this->cc_holder;
-        $ksKartObject->KK_No = $this->cc_number;
-        $ksKartObject->KK_SK_Ay = $this->cc_expiry_month;
-        $ksKartObject->KK_SK_Yil = $this->cc_expiry_year;
-        $ksKartObject->KK_Kart_Adi = $this->kartsaklama_kartismi;
-        $ksKartObject->KK_Islem_ID = $this->kartsaklama_islemid;
+        $ksKartObject->KK_Sahibi = $kart_sahibi ?? $this->cc_holder;
+        $ksKartObject->KK_No = $kart_numarasi ?? $this->cc_number;
+        $ksKartObject->KK_SK_Ay = $kart_skt_ay ?? $this->cc_expiry_month;
+        $ksKartObject->KK_SK_Yil = $kart_skt_yil ?? $this->cc_expiry_year;
+        $ksKartObject->KK_Kart_Adi = $kartsaklama_ismi ?? $this->kartsaklama_kartismi;
+        $ksKartObject->KK_Islem_ID = $kartsaklama_islemid ?? $this->kartsaklama_islemid;
 
         return $this->param->getKsSoapClient()->KS_Kart_Ekle($ksKartObject)->KS_Kart_EkleResult;
     }
 
-    public function getPaymentResult(): stdClass
+    public function OdemeIstegiGonder(): stdClass
     {
-        $paymentObject = $this->getPaymentObject();
-        switch ($this->payment_type)
+        $paymentObject = $this->OdemeObjesiOlustur();
+        switch ($this->odeme_tipi)
         {
             case self::ODEME_NORMAL:
                 return $this->param->getSoapClient()->TP_Islem_Odeme_WNS($paymentObject);
@@ -319,18 +319,18 @@ class Odeme
         }
     }
 
-    public function getPaymentObject(): stdClass
+    public function OdemeObjesiOlustur(): stdClass
     {
         $paymentObject = $this->param->getClient()->istekObjesiTemeliGetir(true);
 
-        if (in_array($this->payment_type, [self::ODEME_NORMAL, self::ODEME_DOVIZ, self::ODEME_3DMODEL]))
+        if (in_array($this->odeme_tipi, [self::ODEME_NORMAL, self::ODEME_DOVIZ, self::ODEME_3DMODEL]))
         {
             $paymentObject->KK_Sahibi = $this->cc_holder;
             $paymentObject->KK_No = $this->cc_number;
             $paymentObject->KK_SK_Ay = $this->cc_expiry_month;
             $paymentObject->KK_SK_Yil = $this->cc_expiry_year;
             $paymentObject->KK_CVC = $this->cc_cvv;
-            $paymentObject->Islem_Hash = $this->getHash();
+            $paymentObject->Islem_Hash = $this->HashOlustur();
 
             if (isset($this->extra_data5))
             {
@@ -338,13 +338,13 @@ class Odeme
             }
         }
 
-        if (in_array($this->payment_type, [self::ODEME_NORMAL, self::ODEME_KART_SAKLAMALI, self::ODEME_3DMODEL]))
+        if (in_array($this->odeme_tipi, [self::ODEME_NORMAL, self::ODEME_KART_SAKLAMALI, self::ODEME_3DMODEL]))
         {
             $paymentObject->SanalPOS_ID = $this->pos_id;
-            $paymentObject->Taksit = $this->installment;
+            $paymentObject->Taksit = $this->taksit_sayisi;
         }
 
-        if (in_array($this->payment_type, [self::ODEME_NORMAL, self::ODEME_DOVIZ, self::ODEME_KART_SAKLAMALI, self::ODEME_3DMODEL]))
+        if (in_array($this->odeme_tipi, [self::ODEME_NORMAL, self::ODEME_DOVIZ, self::ODEME_KART_SAKLAMALI, self::ODEME_3DMODEL]))
         {
             $paymentObject->KK_Sahibi_GSM = $this->cc_holder_gsm;
             $paymentObject->Basarili_URL = $this->success_redirect_url;
@@ -353,7 +353,7 @@ class Odeme
             $paymentObject->Siparis_Aciklama = $this->order_description;
             $paymentObject->Islem_Tutar = $this->order_price;
             $paymentObject->Toplam_Tutar = $this->order_total;
-            $paymentObject->Islem_Guvenlik_Tip = $this->paywith_3d ? '3D' : 'NS';
+            $paymentObject->Islem_Guvenlik_Tip = $this->odeme_3D ? '3D' : 'NS';
             $paymentObject->Islem_ID = $this->process_id;
             $paymentObject->IPAdr = $this->client_ip;
             $paymentObject->Ref_URL = $this->referrer_page_url;
@@ -376,7 +376,7 @@ class Odeme
             }
         }
 
-        switch ($this->payment_type)
+        switch ($this->odeme_tipi)
         {
             case self::ODEME_KART_SAKLAMALI:
                 $paymentObject->KS_Kart_No = $this->cc_number;
@@ -393,7 +393,7 @@ class Odeme
                 $paymentObject->Order_ID = $this->order_id;
                 $paymentObject->Order_Description = $this->order_description;
                 $paymentObject->Amount = $this->order_total;
-                $paymentObject->Payment_Hash = $this->getHash();
+                $paymentObject->Payment_Hash = $this->HashOlustur();
                 $paymentObject->Transaction_ID = $this->process_id;
                 $paymentObject->IPAddress = $this->client_ip;
                 $paymentObject->Referrer_URL = $this->referrer_page_url;
