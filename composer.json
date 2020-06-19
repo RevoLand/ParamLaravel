@@ -1,0 +1,39 @@
+{
+    "name": "revoland/paramlaravel",
+    "type": "library",
+    "description": "Param Laravel Integration Package",
+    "keywords": [
+        "param",
+        "turkparam",
+        "parampos",
+        "laravel"
+    ],
+    "homepage": "https://github.com/RevoLand/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mert Ercan",
+            "email": "me@mertercan.com",
+            "homepage": "https://mertercan.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "laravel/framework": "6.* || 7.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "RevoLand\\ParamLaravel\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RevoLand\\ParamLaravel\\ParamServiceProvider"
+            ]
+        }
+    }
+}
