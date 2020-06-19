@@ -12,6 +12,38 @@ PARAM_TEST_MODE=true
 
 ___
 
+## Geliştirme ortamında kullanımı
+
+* Proje indirilir.
+* "/vendor/" klasörü altında "revoland/paramlaravel" isminde bir klasör oluşturulur ve indirilen proje buraya çıkartılır.
+* composer.json dosyasına aşağıdaki satırlar eklenir:
+
+``` json
+"repositories": {
+    "dev-package": {
+        "type": "path",
+        "url": "vendor/revoland/paramlaravel",
+        "options": {
+            "symlink": true
+        }
+    }
+},
+```
+
+* Aşağıdaki komut projenin ana dizininde çalıştırılarak paket'in Laravel entegrasyonu tamamlanmış olur.
+
+``` js
+composer require revoland / paramlaravel @dev
+```
+
+* (Opsiyonel olarak) aşağıdaki komut ile paramlaravel.php ayar dosyası oluşturulur.
+
+``` 
+php artisan vendor:publish --tag=config
+```
+
+___
+
 ## Örnek Kullanımlar:
 
 ### Param sınıfını çağırma
@@ -21,7 +53,9 @@ use RevoLand\ParamLaravel\Param;
 
 $param = new Param();
 ```
+
 ___
+
 ### Param sınıfı üzerinden kullanılabilecek metotlar
 
 ``` php
@@ -69,7 +103,9 @@ $param->IslemIptalIade(string $durum, int $dekont_id, string $tutar);
 
 $param->SakliKartListesiGetir(string $kart_no = null, string $kart_saklama_kisi_id = null);
 ```
+
 ___
+
 ### Düzenlenmiş bir Client nesnesi ile Param sınıfı oluşturma
 
 ``` php
@@ -88,7 +124,9 @@ $client = new Client('10738', 'Test', 'Test', '0c13d406-873b-403b-9c09-a5766840d
 
 $param = new Param($client);
 ```
+
 ___
+
 ### Hâli hazırda var olan bir Param sınıfının Client nesnesini değiştirme
 
 ``` php
@@ -111,7 +149,9 @@ $param->setClient($client);
 ```
 
 > *Normal bir kullanım için ENV dosyasında yapacağınız değişiklikler yeterlidir. Client sınıfını çağırmanıza/ayarlamanıza gerek yoktur.*
+
 ___
+
 ### BinSanalPosGetir Metodu
 
 *Verilen BIN için kullanılabilecek Pos bilgilerini döndürür. Aynı zamanda verilen BIN'i trim fonksiyonundan geçirir ve yalnızca ilk 6 karakteri alır. BIN belirtilmez ise sistemde mevcut olan tüm BIN bilgilerini döndürür.*
