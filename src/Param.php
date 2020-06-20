@@ -220,13 +220,48 @@ class Param
         }
     }
 
-    public function OzelOranSkListeGetir(): stdClass
+    public function OzelOranListeGetir(): stdClass
     {
-        $ozelOranObject = $this->client->istekObjesiTemeliGetir(true);
+        $ozelOranListeObjesi = $this->client->istekObjesiTemeliGetir(true);
 
         try
         {
-            $paramSoapYanit = $this->getSoapClient()->TP_Ozel_Oran_SK_Liste($ozelOranObject)->TP_Ozel_Oran_SK_ListeResult;
+            $paramSoapYanit = $this->getSoapClient()->TP_Ozel_Oran_Liste($ozelOranListeObjesi)->TP_Ozel_Oran_ListeResult;
+            if ($ozelOranListesi = $paramSoapYanit->Sonuc > 0)
+            {
+                $ozelOranListesi = [];
+                if ($xmlData = Param_XmlStringOlustur($paramSoapYanit->DT_Bilgi->any))
+                {
+                    foreach ($xmlData->diffgram->NewDataSet->DT_Ozel_Oranlar as $card)
+                    {
+                        $ozelOranListesi[] = (array) $card;
+                    }
+                }
+            }
+
+            return (object) [
+                'Sonuc' => $paramSoapYanit->Sonuc,
+                'Sonuc_Str' => $paramSoapYanit->Sonuc_Str,
+                'Sonuc_Aciklama' => config('paramlaravel.error_messages.' . $paramSoapYanit->Sonuc, 'Tanımsız hata.'),
+                'DT_Bilgi' => $ozelOranListesi,
+            ];
+        }
+        catch (Exception $ex)
+        {
+            return (object) [
+                'Sonuc' => false,
+                'Sonuc_Str' => $ex->getMessage(),
+            ];
+        }
+    }
+
+    public function OzelOranSkListeGetir(): stdClass
+    {
+        $ozelOranListeObjesi = $this->client->istekObjesiTemeliGetir(true);
+
+        try
+        {
+            $paramSoapYanit = $this->getSoapClient()->TP_Ozel_Oran_SK_Liste($ozelOranListeObjesi)->TP_Ozel_Oran_SK_ListeResult;
             if ($ozelOranListesi = $paramSoapYanit->Sonuc > 0)
             {
                 $ozelOranListesi = [];
@@ -245,6 +280,37 @@ class Param
                 'Sonuc_Aciklama' => config('paramlaravel.error_messages.' . $paramSoapYanit->Sonuc, 'Tanımsız hata.'),
                 'DT_Bilgi' => $ozelOranListesi,
             ];
+        }
+        catch (Exception $ex)
+        {
+            return (object) [
+                'Sonuc' => false,
+                'Sonuc_Str' => $ex->getMessage(),
+            ];
+        }
+    }
+
+    public function OzelOranSkGuncelle(int $ozel_oran_sk_id, string $taksit_orani_1 = '100', string $taksit_orani_2 = '100', string $taksit_orani_3 = '100', string $taksit_orani_4 = '100',
+    string $taksit_orani_5 = '100', string $taksit_orani_6 = '100', string $taksit_orani_7 = '100', string $taksit_orani_8 = '100', string $taksit_orani_9 = '100', string $taksit_orani_10 = '100', string $taksit_orani_11 = '100', string $taksit_orani_12 = '100'): stdClass
+    {
+        $ozelOranGuncellemeIstegiObjesi = $this->client->istekObjesiTemeliGetir(true);
+        $ozelOranGuncellemeIstegiObjesi->Ozel_Oran_SK_ID = $ozel_oran_sk_id;
+        $ozelOranGuncellemeIstegiObjesi->MO_01 = $taksit_orani_1;
+        $ozelOranGuncellemeIstegiObjesi->MO_02 = $taksit_orani_2;
+        $ozelOranGuncellemeIstegiObjesi->MO_03 = $taksit_orani_3;
+        $ozelOranGuncellemeIstegiObjesi->MO_04 = $taksit_orani_4;
+        $ozelOranGuncellemeIstegiObjesi->MO_05 = $taksit_orani_5;
+        $ozelOranGuncellemeIstegiObjesi->MO_06 = $taksit_orani_6;
+        $ozelOranGuncellemeIstegiObjesi->MO_07 = $taksit_orani_7;
+        $ozelOranGuncellemeIstegiObjesi->MO_08 = $taksit_orani_8;
+        $ozelOranGuncellemeIstegiObjesi->MO_09 = $taksit_orani_9;
+        $ozelOranGuncellemeIstegiObjesi->MO_10 = $taksit_orani_10;
+        $ozelOranGuncellemeIstegiObjesi->MO_11 = $taksit_orani_11;
+        $ozelOranGuncellemeIstegiObjesi->MO_12 = $taksit_orani_12;
+
+        try
+        {
+            return $this->getSoapClient()->TP_Ozel_Oran_SK_Guncelle($ozelOranGuncellemeIstegiObjesi)->TP_Ozel_Oran_SK_GuncelleResult;
         }
         catch (Exception $ex)
         {
@@ -308,6 +374,50 @@ class Param
                 'Sonuc_Aciklama' => config('paramlaravel.error_messages.' . $paramSoapYanit->Sonuc, 'Tanımsız hata.'),
                 'DT_Bilgi' => $kartListesi,
             ];
+        }
+        catch (Exception $ex)
+        {
+            return (object) [
+                'Sonuc' => false,
+                'Sonuc_Str' => $ex->getMessage(),
+            ];
+        }
+    }
+
+    public function KartDogrula(string $kart_numarasi, string $kart_skt_ay, string $kart_skt_yil, string $kart_cvc, string $post_return_url, string $data1 = null, string $data2 = null,
+    string $data3 = null, string $data4 = null, string $data5 = null): stdClass
+    {
+        $kartDogrulamaObjesi = $this->client->istekObjesiTemeliGetir(false);
+        $kartDogrulamaObjesi->KK_No = $kart_numarasi;
+        $kartDogrulamaObjesi->KK_SK_Ay = $kart_skt_ay;
+        $kartDogrulamaObjesi->KK_SK_Yil = $kart_skt_yil;
+        $kartDogrulamaObjesi->KK_CVC = $kart_cvc;
+        $kartDogrulamaObjesi->Return_URL = $post_return_url;
+
+        if (isset($data1))
+        {
+            $kartDogrulamaObjesi->Data1 = $data1;
+        }
+        if (isset($data2))
+        {
+            $kartDogrulamaObjesi->Data2 = $data2;
+        }
+        if (isset($data3))
+        {
+            $kartDogrulamaObjesi->Data3 = $data3;
+        }
+        if (isset($data4))
+        {
+            $kartDogrulamaObjesi->Data4 = $data4;
+        }
+        if (isset($data5))
+        {
+            $kartDogrulamaObjesi->Data5 = $data5;
+        }
+
+        try
+        {
+            return $this->getSoapClient()->TP_KK_Verify($kartDogrulamaObjesi)->TP_KK_VerifyResult;
         }
         catch (Exception $ex)
         {

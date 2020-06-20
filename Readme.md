@@ -32,13 +32,13 @@ ___
 
 * Aşağıdaki komut projenin ana dizininde çalıştırılarak paket'in Laravel entegrasyonu tamamlanmış olur.
 
-``` js
-composer require revoland / paramlaravel @dev
+```
+composer require revoland/paramlaravel @dev
 ```
 
-* (Opsiyonel olarak) aşağıdaki komut ile paramlaravel.php ayar dosyası oluşturulur.
+* (Opsiyonel olarak) Hata kod/mesaj tanımlamaları güncellenmek istenirse, aşağıdaki komut ile paramlaravel.php ayar dosyası oluşturulur.
 
-``` 
+```
 php artisan vendor:publish --tag=config
 ```
 
