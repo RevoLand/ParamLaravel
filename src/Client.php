@@ -21,11 +21,11 @@ class Client
 
     public function __construct(string $client_code = null, string $client_username = null, string $client_password = null, string $guid = null, bool $test_mode = null, array $soap_options = null)
     {
-        $this->client_code = $client_code ?? env('PARAM_CLIENT_CODE', '10738');
-        $this->client_username = $client_username ?? env('PARAM_CLIENT_USERNAME', 'Test');
-        $this->client_password = $client_password ?? env('PARAM_CLIENT_PASSWORD', 'Test');
-        $this->guid = $guid ?? env('PARAM_GUID', '0c13d406-873b-403b-9c09-a5766840d98c');
-        $this->test_mode = $test_mode ?? env('PARAM_TEST_MODE', true);
+        $this->client_code = $client_code ?? config('paramlaravel.PARAM_CLIENT_CODE', '10738');
+        $this->client_username = $client_username ?? config('paramlaravel.PARAM_CLIENT_USERNAME', 'Test');
+        $this->client_password = $client_password ?? config('paramlaravel.PARAM_CLIENT_PASSWORD', 'Test');
+        $this->guid = $guid ?? config('paramlaravel.PARAM_GUID', '0c13d406-873b-403b-9c09-a5766840d98c');
+        $this->test_mode = $test_mode ?? config('paramlaravel.PARAM_TEST_MODE', true);
 
         $this->soap_options = $soap_options ?? [
             'soap_version' => 'SOAP_1_1',

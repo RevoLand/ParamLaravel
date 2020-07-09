@@ -10,6 +10,11 @@ return [
      |
      | https://dev.param.com.tr/tr/hata-kodlari
      */
+    'PARAM_CLIENT_CODE' => env('PARAM_CLIENT_CODE'),
+    'PARAM_CLIENT_USERNAME' => env('PARAM_CLIENT_USERNAME'),
+    'PARAM_CLIENT_PASSWORD' => env('PARAM_CLIENT_PASSWORD'),
+    'PARAM_GUID' => env('PARAM_GUID'),
+    'PARAM_TEST_MODE' => env('PARAM_TEST_MODE', true),
 
     'error_messages' => [
         '1' => 'Başarılı',
