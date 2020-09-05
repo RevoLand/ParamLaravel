@@ -15,6 +15,7 @@ return [
     'PARAM_CLIENT_PASSWORD' => env('PARAM_CLIENT_PASSWORD'),
     'PARAM_GUID' => env('PARAM_GUID'),
     'PARAM_TEST_MODE' => env('PARAM_TEST_MODE', true),
+    'CONNECTION_TIMEOUT' => env('PARAM_CONNECTION_TIMEOUT', 30),
 
     'error_messages' => [
         '1' => 'Başarılı',

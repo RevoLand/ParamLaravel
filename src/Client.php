@@ -30,6 +30,7 @@ class Client
         $this->soap_options = $soap_options ?? [
             'soap_version' => 'SOAP_1_1',
             'trace' => 1,
+            'connection_timeout' => config('paramlaravel.CONNECTION_TIMEOUT', 30),
             'stream_context' => stream_context_create([
                 'ssl' => [
                     'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,

@@ -8,6 +8,7 @@ PARAM_CLIENT_USERNAME="Test"
 PARAM_CLIENT_PASSWORD="Test"
 PARAM_GUID="0c13d406-873b-403b-9c09-a5766840d98c"
 PARAM_TEST_MODE=true
+PARAM_CONNECTION_TIMEOUT=30
 ```
 
 ___
@@ -115,6 +116,7 @@ use RevoLand\ParamLaravel\Param;
 $client = new Client('10738', 'Test', 'Test', '0c13d406-873b-403b-9c09-a5766840d98c', true, [
     'soap_version' => 'SOAP_1_1',
     'trace' => 1,
+    'connection_timeout' => config('paramlaravel.CONNECTION_TIMEOUT', 30),
     'stream_context' => stream_context_create([
         'ssl' => [
             'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
@@ -138,6 +140,7 @@ $param = new Param();
 $client = new Client('10738', 'Test', 'Test', '0c13d406-873b-403b-9c09-a5766840d98c', true, [
     'soap_version' => 'SOAP_1_1',
     'trace' => 1,
+    'connection_timeout' => config('paramlaravel.CONNECTION_TIMEOUT', 30),
     'stream_context' => stream_context_create([
         'ssl' => [
             'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
